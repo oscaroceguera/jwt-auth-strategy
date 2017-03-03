@@ -2,9 +2,9 @@ const nodemailer = require("nodemailer")
 const crypto = require('crypto')
 const ALGORITHM = global.config.algorithm
 const PRIVATE_KEY = global.config.privateKey
-var smtpTransport = require('nodemailer-smtp-transport')
+let smtpTransport = require('nodemailer-smtp-transport')
 
-var transporter = nodemailer.createTransport( smtpTransport({
+let transporter = nodemailer.createTransport( smtpTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
@@ -14,7 +14,17 @@ var transporter = nodemailer.createTransport( smtpTransport({
     }
 }))
 
+exports.decrypt = (password) => decrypt(password)
+
 exports.encrypt = (password) => encrypt(password)
+
+// method to decrypt data(password)
+function decrypt(password) {
+  const decipher = crypto.createDecipher(ALGORITHM, PRIVATE_KEY)
+  let dec = decipher.update(password, 'hex', 'utf8')
+  dec += decipher.final('utf8')
+  return dec
+}
 
 // method to encrypt data(password)
 function encrypt(password) {
@@ -25,14 +35,14 @@ function encrypt(password) {
 }
 
 exports.sentMailVerificationLink = (user,token) => {
-    var textLink = `http://${global.config.server.host}:${global.config.server.port}/${global.config.email.verifyEmailUrl}/${token}`
-    var from = `${global.config.email.accountName} Team<${global.config.email.username}>`
-    var mailbody = `<p>Thanks for Registering on ${global.config.email.accountName} </p><p>Please verify your email by clicking on the verification link below.<br/><a href=${textLink.toString()}>Verification Link</a></p>`
+    let textLink = `http://${global.config.server.host}:${global.config.server.port}/${global.config.email.verifyEmailUrl}/${token}`
+    let from = `${global.config.email.accountName} Team<${global.config.email.username}>`
+    let mailbody = `<p>Thanks for Registering on ${global.config.email.accountName} </p><p>Please verify your email by clicking on the verification link below.<br/><a href=${textLink.toString()}>Verification Link</a></p>`
     mail(from, user.username , "Account Verification", mailbody);
 }
 
 function mail(from, email, subject, mailbody){
-    var mailOptions = {
+    let mailOptions = {
         from: from, // sender address
         to: email, // list of receivers
         subject: subject, // Subject line

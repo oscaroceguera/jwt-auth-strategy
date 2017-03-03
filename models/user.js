@@ -27,6 +27,9 @@ User.statics = {
   updateUser: function(user, callback) {
     user.save(callback);
   },
+  findUser: function (username, cb) {
+    this.findOne({username}, cb)
+  }
 }
 
 let user = mongoose.model('user', User)

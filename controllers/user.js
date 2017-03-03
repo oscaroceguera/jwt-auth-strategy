@@ -55,3 +55,38 @@ exports.verifyEmail = (req, res) => {
     })
   })
 }
+
+exports.login = (req, res) => {
+  User.findUser(req.body.username, (err, user) => {
+    if (!err) {
+      if (user === null) {
+        return res.send(Boom.forbidden("invalid username or password"))
+      }
+
+      if (req.body.password === Common.decrypt(user.password)) {
+        if (!user.isVerified) {
+          return res.send(Boom.forbidden("Your email address is not verified. please verify your email address to proceed"))
+        } else {
+          let tokenData = {
+            username: user.username,
+            id: user._id
+          }
+          let result = {
+            username: user.username,
+            token: Jwt.sign(tokenData, PRIVATE_KEY)
+          }
+          return res.json(result)
+        }
+      } else {
+        return res.send(Boom.forbidden("invalid username or password"))
+      }
+    } else {
+      if (11000 === err.code || 11001 === err.code) {
+        return res.send(Boom.forbidden("please provide another user email"))
+      } else {
+        return res.send(Boom.badImplementation(err))
+      }
+    }
+
+  })
+}
