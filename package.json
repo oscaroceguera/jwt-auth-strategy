@@ -1,0 +1,24 @@
+{
+  "name": "jwt-auth-strategy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.0",
+    "boom": "^4.2.0",
+    "express": "^4.15.0",
+    "jsonwebtoken": "^7.3.0",
+    "mongoose": "^4.8.5",
+    "nodemailer": "^3.1.4",
+    "nodemailer-smtp-transport": "^2.7.2",
+    "nodemon": "^1.11.0",
+    "uuid": "^3.0.1"
+  }
+}
