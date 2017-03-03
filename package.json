@@ -16,6 +16,7 @@
     "express": "^4.15.0",
     "jsonwebtoken": "^7.3.0",
     "mongoose": "^4.8.5",
+    "node-env-file": "^0.1.8",
     "nodemailer": "^3.1.4",
     "nodemailer-smtp-transport": "^2.7.2",
     "nodemon": "^1.11.0",

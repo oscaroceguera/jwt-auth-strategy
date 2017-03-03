@@ -20,7 +20,13 @@ let User = new Schema({
 User.statics = {
   saveUser: function (requestData, cb) {
     this.create(requestData, cb)
-  }
+  },
+  findUserByIdAndUserName: function (id, username, cb) {
+    this.findOne({username, _id: id}, cb)
+  },
+  updateUser: function(user, callback) {
+    user.save(callback);
+  },
 }
 
 let user = mongoose.model('user', User)

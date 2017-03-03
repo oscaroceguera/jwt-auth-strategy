@@ -27,3 +27,31 @@ exports.create = (req, res) => {
   })
 
 }
+
+exports.verifyEmail = (req, res) => {
+  Jwt.verify(req.params.token, PRIVATE_KEY, (error, decoded) => {
+    if (decoded === undefined) {
+      return res.send(Boom.forbidden("invalid verification link"))
+    }
+
+    User.findUserByIdAndUserName(decoded.id, decoded.username, (err, user) => {
+      if (err) {
+        return res.send(Boom.badImplementation(err))
+      }
+      if(user=== null) {
+        return res.send(Boom.forbidden("invalid verification link"))
+      }
+      if (user.isVerified === true) {
+        return res.send(Boom.forbidden("account is already verifid"))
+      }
+      user.isVerified = true
+      User.updateUser(user, (err, user) => {
+        if (err) {
+          return res.send(Boom.badImplementation(err))
+        } else {
+          return res.send(Boom.forbidden("account sucessfully verified"))
+        }
+      })
+    })
+  })
+}
