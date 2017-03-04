@@ -41,6 +41,12 @@ exports.sentMailVerificationLink = (user,token) => {
     mail(from, user.username , "Account Verification", mailbody);
 }
 
+exports.sentMailForgotPassword = function(user) {
+    let from = `${global.config.email.accountName} Team<${global.config.email.username}>`
+    let mailbody = `<p>Your ${global.config.email.accountName}  Account Credential</p><p>username : ${user.username} , password : ${decrypt(user.password)}</p>`
+    mail(from, user.username , "Account password", mailbody);
+}
+
 function mail(from, email, subject, mailbody){
     let mailOptions = {
         from: from, // sender address

@@ -1,6 +1,7 @@
 const Boom = require('boom')
 const Common = require('../config/common')
 const Jwt = require('jsonwebtoken')
+const randomstring = require("randomstring")
 const PRIVATE_KEY = global.config.privateKey
 
 const User = require('../models/user').User
@@ -89,4 +90,54 @@ exports.login = (req, res) => {
     }
 
   })
+}
+
+exports.resendVerificationEmail = (req, res) => {
+  User.findUser(req.body.username, (err, user) => {
+    if (!err) {
+      if (user === null) {
+        return res.send(Boom.forbidden("invalid username or password"))
+      }
+      if (req.body.password === Common.decrypt(user.password)) {
+        if (user.isVerified) {
+          return res.send(Boom.forbidden("your email address is already verified"))
+        } else {
+          let tokenData = {
+            userName: user.userName,
+            id: user._id
+          }
+          Common.sentMailVerificationLink(user, Jwt.sing(tokenData, PRIVATE_KEY))
+          return res.send(Boom.forbidden("account verification link is sucessfully send to an email id"))
+        }
+      }else {
+        return res.send(Boom.forbidden("invalid username or password"))
+      }
+    } else {
+      console.error(err);
+      return res.send(Boom.badImplementation(err))
+    }
+  })
+}
+
+exports.forgotPassword = (req, res) => {
+  const random = Common.encrypt(randomstring.generate({length: 5, charset: 'alphabetic'}))
+  console.log('RAMDOM', random);
+  User.findUserUpdate({username: req.body.username}, {password: random}, (err, user) => {
+    console.log('USERRRR', user);
+    if (!err) {
+      if (user === null) {
+        return res.send(Boom.forbidden("invalid username"))
+      } else {
+        user.password = random
+        Common.sentMailForgotPassword(user)
+        return res.send("password is send to registered email id")
+      }
+    } else {
+      return res.send(Boom.badImplementation(err))
+    }
+  })
+}
+
+exports.protegido = (req, res) => {
+  return res.send('Es una ventana protegida')
 }

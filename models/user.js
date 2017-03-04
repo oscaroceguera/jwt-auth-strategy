@@ -29,6 +29,9 @@ User.statics = {
   },
   findUser: function (username, cb) {
     this.findOne({username}, cb)
+  },
+  findUserUpdate: function (query, user, cb) {
+    this.findOneAndUpdate(query, user, cb)
   }
 }
 
